@@ -21,10 +21,11 @@ void test_init(void) {
 void test_insert_single(const key_t key) {
   rbtree *t = new_rbtree();
   node_t *p = rbtree_insert(t, key);
+  // printf("%d\n", p->key);
   assert(p != NULL);
   assert(t->root == p);
-  assert(p->key == key);
-  // assert(p->color == RBTREE_BLACK);  // color of root node should be black
+  assert(p->key == key);  // 여기서 걸림!!
+  assert(p->color == RBTREE_BLACK);  // color of root node should be black
 #ifdef SENTINEL
   assert(p->left == t->nil);
   assert(p->right == t->nil);
@@ -137,6 +138,7 @@ void test_to_array(rbtree *t, const key_t *arr, const size_t n) {
   rbtree_to_array(t, res, n);
   for (int i = 0; i < n; i++) {
     assert(arr[i] == res[i]);
+    // printf("%d, %d", arr[i], res[i]);
   }
   free(res);
 }
@@ -313,12 +315,13 @@ void test_to_array_suite() {
 void test_find_erase(rbtree *t, const key_t *arr, const size_t n) {
   for (int i = 0; i < n; i++) {
     node_t *p = rbtree_insert(t, arr[i]);
+    // printf("insert_arr[%d] = %d", i, arr[i]);
     assert(p != NULL);
   }
 
   for (int i = 0; i < n; i++) {
     node_t *p = rbtree_find(t, arr[i]);
-    // printf("arr[%d] = %d\n", i, arr[i]);
+    // printf("find_arr[%d] = %d\n", i, arr[i]);
     assert(p != NULL);
     assert(p->key == arr[i]);
     rbtree_erase(t, p);
@@ -371,8 +374,8 @@ int main(void) {
   test_init();
   test_insert_single(1024);
   test_find_single(512, 1024);
-  test_erase_root(128);
-  test_find_erase_fixed();
+  test_erase_root(128);     
+  test_find_erase_fixed();  
   test_minmax_suite();
   test_to_array_suite();
   test_distinct_values();
